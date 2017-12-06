@@ -92,7 +92,16 @@ It looks pretty promising in the images, but unfortunately this worked shit.
 Another idea was to make a weight for the polyfit by taking pixels in the small window/pixels in big window. So if we have lots of pixels inside the small window, and few in proximity next to it, we know it's pretty good, but if we have lots of pixels around our window aswell, we know it's something wrong with these.
 
 
+After review:
 
+I added a few things to be able to fit the lines better.
+1. Smoothing the lines using the following:
+	1. Draw last lines into the binary image. so if nothing is found, we will still find this line.
+	2. Avrage with previous line: 90% of old, 10% of current.
+	3. Avrage the start position (the bottom part should almost never change at all)
+2. Merge binary points from both lines before trying to fit, here we assume that both lines have the same curvature, this is not really true, but in our case its almost. This ensures that even if one side has almost no pixels, we still can catch it.
+3. Added 2 new things for the binary image, L and B channel fram lab-color space. also adjusted the parameters.. However, fellt like the more I tried the worse result. One thing I would like to test here is to use ML to figure out the best parameters and/or use adaptive threshold. 
+	
 
 #### 5. Describe how (and identify where in your code) you calculated the radius of curvature of the lane and the position of the vehicle with respect to center.
 
@@ -125,3 +134,10 @@ Here's a [link to my video result](./test_videos_output/project_video.mp4)
 #### 1. Briefly discuss any problems / issues you faced in your implementation of this project.  Where will your pipeline likely fail?  What could you do to make it more robust?
 
 It went pretty bad, I had some new ideas put turned out to be worse, so pretty much ended up with the basic directly from the course, I also didn't use the "skip sliding window" part, which probably would be a better idea to start with instead of trying to improve the sliding image part which is just slow and worse anyway.. probably would be better to spend the time on generating better binary images etc.. If I get more time after the next project I will fix that and use a class for tracking the curves as recommended in the course.
+
+after review:
+What are the limitations of your particular approach? Do you think your algorithm could robustly handle nighttime driving, rain, and so on?
+There's many limitations, this is very obvious when trying out the more challanging videos where this approach fail 99% of the time. 
+
+What sort of improvements do you think are necessary before you'd feel safe riding in a car that was running your algorithm?
+Make it possible to handle different light condition, maybe normalizing the image before convert to binary could help?
